@@ -5,9 +5,9 @@
             <h2>Tour Planner</h2>
         </div>
         <div class="tp__controls">
-            <button id="tpPrev" class="btn">←</button>
+            <button id="tpPrev" class="btn" aria-label="Mes anterior">←</button>
             <div id="tpMonth" class="tp__month">Mes</div>
-            <button id="tpNext" class="btn">→</button>
+            <button id="tpNext" class="btn" aria-label="Mes siguiente">→</button>
         </div>
     </header>
 
@@ -23,6 +23,7 @@
     <aside id="tpDetail" class="tp__detail">
         <h3>Detalle</h3>
         <p class="muted">Fecha: <strong id="tpDate">—</strong></p>
+
         <form class="tp__form">
             <label>Ciudad<input id="tpCity" type="text" /></label>
             <label>Lugar<input id="tpVenue" type="text" /></label>
@@ -35,12 +36,15 @@
                 </select>
             </label>
             <label>Notas<textarea id="tpNotes" rows="3"></textarea></label>
-            <div class="tp__export-actions">
-                <button id="tpExportIMG" class="btn btn--primary">Descargar imagen</button>
-                <button id="tpExportCopy" class="btn">Copiar</button>
-                <button id="tpExportClose" class="btn">Cerrar</button>
+            <div class="tp__actions">
+                <button id="tpSave" class="btn btn--primary" type="button">Guardar</button>
+                <button id="tpClear" class="btn btn--danger" type="button">Limpiar día</button>
             </div>
 
+            <div class="tp__export-actions">
+                <button id="tpExportIMG" class="btn btn--primary" type="button">Descargar imagen</button>
+                <button id="tpExportCopy" class="btn" type="button">Copiar</button>
+            </div>
         </form>
     </aside>
 </section>

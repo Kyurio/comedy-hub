@@ -18,19 +18,15 @@
   <!-- Lienzo -->
   <div class="cn__board" id="cnBoard" aria-label="Lienzo de ideas" @contextmenu.prevent="openCtxOnBoard($event)"
     @mousedown.self="clearSelection()" ref="boardRef">
+    <!-- SVG overlay para conexiones -->
+    <svg id="cnLinks" class="cn__links" aria-hidden="true"></svg>
 
-    <!-- Nota -->
     <!-- Nota -->
     <article v-for="n in notes" :key="n.id" class="cn__note"
       :class="['note--'+n.color, isSelected(n.id)?'is-selected':'']"
-      :style="{ left: n.x+'px', top: n.y+'px', zIndex: n.z }" 
-      @pointerdown="onDragStart($event, n)"
-
-      @click.stop="onNoteClick($event, n)"
-      @dblclick.stop="startEdit(n)"
-
-      @contextmenu.stop.prevent="openCtxOnNote($event, n)"
-      >
+      :style="{ left: n.x+'px', top: n.y+'px', zIndex: n.z }" @pointerdown="onDragStart($event, n)"
+      @click.stop="onNoteClick($event, n)" @dblclick.stop="startEdit(n)"
+      @contextmenu.stop.prevent="openCtxOnNote($event, n)">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.35rem">
         <h4 style="margin:0">Idea</h4>
         <div style="display:flex;gap:.35rem;align-items:center">
@@ -51,7 +47,6 @@
       </div>
     </article>
 
-
     <!-- Menú contextual -->
     <div v-if="ctx.visible" class="cn__ctx" :style="{ left: ctx.x+'px', top: ctx.y+'px' }" @mousedown.stop>
       <template v-if="ctx.type==='board'">
@@ -69,6 +64,24 @@
           {{ isSelected(ctx.note.id) ? 'Quitar de selección' : 'Seleccionar' }}
         </button>
         <button class="cn__ctx-item" @click="duplicate(ctx.note)">Duplicar</button>
+
+        <!-- Conexiones (con checks defensivos) -->
+        <div class="cn__ctx-subtitle">Conexiones</div>
+
+        <button class="cn__ctx-item" :disabled="!startLinkFrom" @click="startLinkFrom && startLinkFrom(ctx.note.id)">
+          Iniciar conexión desde esta nota
+        </button>
+
+        <button class="cn__ctx-item" :disabled="!linkSourceId || !completeLinkTo"
+          @click="linkSourceId && completeLinkTo && completeLinkTo(ctx.note.id)">
+          Conectar aquí {{ linkSourceId ? '(completar)' : '' }}
+        </button>
+
+        <button class="cn__ctx-item" :disabled="!(ctx.note && hasLinks && hasLinks(ctx.note.id))"
+          @click="ctx.note && removeLinksOf && removeLinksOf(ctx.note.id)">
+          Quitar conexiones de esta nota
+        </button>
+
         <div class="cn__ctx-subtitle">Color</div>
         <button class="cn__ctx-item" v-for="c in colors" :key="c" @click="recolor(ctx.note, c)">
           {{ colorName(c) }}
@@ -80,8 +93,8 @@
   </div>
 
   <p class="muted">
-    Tip: Click derecho para crear/cambiar color. Shift+click para multi-selección.
-    Arrastra para mover (mueve el grupo si hay varios seleccionados).
-    Delete elimina selección. Esc limpia selección.
+    Tips: Click derecho para crear/cambiar color. Shift+click para multi-selección. Arrastra para mover (el grupo si hay
+    varios seleccionados). Delete elimina selección. Esc limpia selección.
+    Conexiones: inicia en una nota (menú contextual) y haz click en otra para completar. Atajo: <b>Ctrl/Cmd + L</b>.
   </p>
 </section>

@@ -20,3 +20,29 @@
         setTimeout(reveal, 200);
     });
 })();
+
+(function () {
+    const KEY = 'comedyhub_theme_v1';
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const saved = localStorage.getItem(KEY);
+    const initialDark = saved ? (saved === 'dark') : prefersDark;
+
+    function applyTheme(dark) {
+        document.documentElement.classList.toggle('dark', dark);
+        if (metaTheme) metaTheme.setAttribute('content', dark ? '#0b0b0b' : '#ffffff');
+        localStorage.setItem(KEY, dark ? 'dark' : 'light');
+    }
+
+    // aplicar al inicio
+    applyTheme(initialDark);
+
+    // toggle al click
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            const nowDark = !document.documentElement.classList.contains('dark');
+            applyTheme(nowDark);
+        });
+    }
+})();

@@ -4,16 +4,21 @@
 
   function makeApp(template) {
     return createApp({
-      template, // <= usamos el HTML inyectado como plantilla explícita
+      template,
       setup() {
         // --- estado ---
         const STORAGE = 'comedy_notes_v2';
+        const STORAGE_LINKS = 'comedy_notes_links_v1';
         const colors = ['sky', 'emerald', 'amber', 'fuchsia', 'slate'];
+
         const notes = ref([]);
+        const links = ref([]);                 // [{id, from, to}]
+        const linkSourceId = ref(null);        // origen temporal para completar conexión
+
         const selected = ref(new Set());
         const zTop = ref(10);
         const boardRef = ref(null);
-        let dragging = null; // {ids, startX, startY, orig:Map, maxX, maxY}
+        let dragging = null;                   // {ids, startX, startY, orig:Map, maxX, maxY}
 
         // Toolbar
         const draft = reactive({ text: '', color: 'sky' });
@@ -30,13 +35,16 @@
         // helpers
         const uid = () => Math.random().toString(36).slice(2, 9);
         const colorName = (c) => ({ sky: 'Azul', emerald: 'Verde', amber: 'Amarillo', fuchsia: 'Fucsia', slate: 'Gris' }[c] || c);
-        const load = () => { try { return JSON.parse(localStorage.getItem(STORAGE) || '[]'); } catch { return []; } };
-        const persist = () => { localStorage.setItem(STORAGE, JSON.stringify(notes.value)); };
+        const loadNotes = () => { try { return JSON.parse(localStorage.getItem(STORAGE) || '[]'); } catch { return []; } };
+        const saveNotes = () => { localStorage.setItem(STORAGE, JSON.stringify(notes.value)); };
+        const loadLinks = () => { try { links.value = JSON.parse(localStorage.getItem(STORAGE_LINKS) || '[]'); } catch { links.value = []; } };
+        const saveLinks = () => { localStorage.setItem(STORAGE_LINKS, JSON.stringify(links.value)); };
         const nextZ = () => Math.max(1, ...notes.value.map(n => n.z || 1)) + 1;
 
         const isSelected = (id) => selected.value.has(id);
         const toggleSelect = (id) => {
-          if (selected.value.has(id)) selected.value.delete(id); else selected.value.add(id);
+          if (selected.value.has(id)) selected.value.delete(id);
+          else selected.value.add(id);
           closeCtx();
         };
         const clearSelection = () => { selected.value.clear(); closeCtx(); };
@@ -51,16 +59,18 @@
         };
         const createAt = (x, y, color, text = '') => {
           const n = {
-            id: uid(), text: (text || draft.text || '').trim() || 'Idea',
-            color: color || draft.color || 'sky', x: Math.max(0, x), y: Math.max(0, y), z: nextZ()
+            id: uid(),
+            text: (text || draft.text || '').trim() || 'Idea',
+            color: color || draft.color || 'sky',
+            x: Math.max(0, x), y: Math.max(0, y), z: nextZ()
           };
-          notes.value.push(n); persist(); closeCtx();
+          notes.value.push(n); saveNotes(); closeCtx(); redrawLinks();
         };
 
-        // drag (arrastrar toda la nota)
+        // drag
         const onDragStart = (e, note) => {
-          if (e.button !== 0) return;                     // solo botón izquierdo
-          if (editingId.value === note.id) return;        // no arrastrar si editas
+          if (e.button !== 0) return;
+          if (editingId.value === note.id) return;
           const t = e.target;
           if (t && (t.closest('.cn__edit') || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(t.tagName))) return;
 
@@ -99,27 +109,34 @@
             ny = Math.max(0, Math.min(ny, dragging.maxY));
             return { ...n, x: nx, y: ny };
           });
+          requestAnimationFrame(redrawLinks);
         };
 
         const onDragEnd = () => {
           if (!dragging) return;
-          dragging = null; persist();
+          dragging = null; saveNotes();
           document.body.style.cursor = '';
           window.removeEventListener('pointermove', onDragMove);
+          redrawLinks();
         };
 
         // acciones
-        const bringFront = (n) => { n.z = nextZ(); persist(); };
+        const bringFront = (n) => { n.z = nextZ(); saveNotes(); };
         const removeNote = (id) => {
+          // eliminar conexiones relacionadas
+          const before = links.value.length;
+          links.value = links.value.filter(l => l.from !== id && l.to !== id);
+          if (links.value.length !== before) saveLinks();
+
           notes.value = notes.value.filter(n => n.id !== id);
           selected.value.delete(id);
           if (editingId.value === id) cancelEdit();
-          persist(); closeCtx();
+          saveNotes(); closeCtx(); redrawLinks();
         };
         const duplicate = (n) => { createAt(n.x + 16, n.y + 12, n.color, n.text); };
-        const recolor = (n, color) => { n.color = color; persist(); closeCtx(); };
+        const recolor = (n, color) => { n.color = color; saveNotes(); closeCtx(); };
 
-        // edición inline
+        // edición
         const startEdit = (n) => {
           editingId.value = n.id; editDraft.value = n.text || ''; bringFront(n);
           nextTick(() => {
@@ -131,7 +148,7 @@
         const commitEdit = () => {
           if (!editingId.value) return;
           const i = notes.value.findIndex(n => n.id === editingId.value);
-          if (i >= 0) { notes.value[i] = { ...notes.value[i], text: (editDraft.value || '').trim() }; persist(); }
+          if (i >= 0) { notes.value[i] = { ...notes.value[i], text: (editDraft.value || '').trim() }; saveNotes(); }
           editingId.value = null; editDraft.value = '';
         };
         const cancelEdit = () => { editingId.value = null; editDraft.value = ''; };
@@ -139,8 +156,120 @@
         // selección
         const onNoteClick = (e, n) => {
           if (editingId.value === n.id) return;
-          if (e.shiftKey) toggleSelect(n.id); else selected.value = new Set([n.id]); closeCtx();
+
+          // completar conexión con simple click
+          if (linkSourceId.value && linkSourceId.value !== n.id) {
+            completeLinkTo(n.id);
+            e.stopPropagation();
+            return;
+          }
+
+          if (e.shiftKey) toggleSelect(n.id);
+          else selected.value = new Set([n.id]);
+          closeCtx();
         };
+
+        // --- Conexiones ---
+        const linkUid = () => 'l_' + uid();
+
+        function startLinkFrom(noteId) {
+          if (!noteId) return;
+          linkSourceId.value = noteId;
+          hint('Selecciona otra nota para conectar');
+          closeCtx();
+        }
+
+        function completeLinkTo(targetId) {
+          if (!linkSourceId.value || !targetId || linkSourceId.value === targetId) return;
+          // evita duplicadas (bidireccional única)
+          const exists = links.value.some(l =>
+            (l.from === linkSourceId.value && l.to === targetId) ||
+            (l.from === targetId && l.to === linkSourceId.value)
+          );
+          if (!exists) {
+            links.value.push({ id: linkUid(), from: linkSourceId.value, to: targetId });
+            saveLinks();
+          }
+          linkSourceId.value = null;
+          redrawLinks();
+        }
+
+        const hasLinks = (noteId) => links.value.some(l => l.from === noteId || l.to === noteId);
+
+        function removeLinksOf(noteId) {
+          links.value = links.value.filter(l => l.from !== noteId && l.to !== noteId);
+          saveLinks(); redrawLinks(); closeCtx();
+        }
+
+        function redrawLinks() {
+          const svg = document.getElementById('cnLinks');
+          const board = boardRef.value;
+          if (!svg || !board) return;
+
+          while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+          const boardRect = board.getBoundingClientRect();
+
+          function centerOfCard(el) {
+            const r = el.getBoundingClientRect();
+            return { x: (r.left + r.right) / 2 - boardRect.left, y: (r.top + r.bottom) / 2 - boardRect.top };
+          }
+
+          function getCardById(id) {
+            return board.querySelector(`.cn__note[data-id="${id}"]`) ||
+              [...board.querySelectorAll('.cn__note')].find(n => n.__nid === id) ||
+              null;
+          }
+
+          // aseguramos data-id en DOM (para búsqueda robusta)
+          board.querySelectorAll('.cn__note').forEach((el, i) => {
+            const vIdx = i; // no usamos
+          });
+
+          links.value.forEach(l => {
+            const cardA = board.querySelector(`.cn__note[style*="z-index"][style*="left: ${notes.value.find(n => n.id === l.from)?.x}px"]`) ||
+              board.querySelector(`.cn__note`);
+            const cardB = board.querySelector(`.cn__note[style*="z-index"][style*="left: ${notes.value.find(n => n.id === l.to)?.x}px"]`) ||
+              board.querySelector(`.cn__note`);
+
+            const elA = board.querySelector(`.cn__note:is(.note--sky,.note--emerald,.note--amber,.note--fuchsia,.note--slate)[style*="left: ${notes.value.find(n => n.id === l.from)?.x}px"][style*="top: ${notes.value.find(n => n.id === l.from)?.y}px"]`);
+            const elB = board.querySelector(`.cn__note:is(.note--sky,.note--emerald,.note--amber,.note--fuchsia,.note--slate)[style*="left: ${notes.value.find(n => n.id === l.to)?.x}px"][style*="top: ${notes.value.find(n => n.id === l.to)?.y}px"]`);
+
+            const Ael = elA || cardA, Bel = elB || cardB;
+            if (!Ael || !Bel) return;
+
+            const A = centerOfCard(Ael), B = centerOfCard(Bel);
+            const dx = B.x - A.x, midx = A.x + dx / 2;
+            const c1 = `${midx},${A.y}`, c2 = `${midx},${B.y}`;
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('class', 'cn-link');
+            path.setAttribute('d', `M ${A.x},${A.y} C ${c1} ${c2} ${B.x},${B.y}`);
+            svg.appendChild(path);
+
+            const dotA = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dotA.setAttribute('class', 'cn-link-dot');
+            dotA.setAttribute('r', '3.5'); dotA.setAttribute('cx', A.x); dotA.setAttribute('cy', A.y);
+            svg.appendChild(dotA);
+
+            const dotB = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dotB.setAttribute('class', 'cn-link-dot');
+            dotB.setAttribute('r', '3.5'); dotB.setAttribute('cx', B.x); dotB.setAttribute('cy', B.y);
+            svg.appendChild(dotB);
+          });
+        }
+
+        // util: mini hint
+        function hint(msg) {
+          try {
+            const el = document.createElement('div');
+            el.textContent = msg;
+            el.style.cssText =
+              'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#111;border:1px solid #333;padding:8px 12px;border-radius:10px;color:#ddd;font-size:12px;z-index:9999;opacity:.95';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1300);
+          } catch { }
+        }
 
         // menú contextual (coords relativas + clamp)
         const openCtxOnBoard = (e) => {
@@ -175,36 +304,64 @@
 
         // atajos
         const onKey = (e) => {
-          if (e.key === 'Escape') { if (editingId.value) return cancelEdit(); clearSelection(); }
+          if (e.key === 'Escape') {
+            if (linkSourceId.value) { linkSourceId.value = null; }
+            if (editingId.value) return cancelEdit();
+            clearSelection();
+          }
           if (e.key === 'Delete' || e.key === 'Backspace') {
             if (editingId.value) return;
             if (selected.value.size) {
               if (!confirm(`Eliminar ${selected.value.size} nota(s)?`)) return;
-              notes.value = notes.value.filter(n => !selected.value.has(n.id));
-              selected.value.clear(); persist();
+              const delIds = new Set(selected.value);
+              notes.value = notes.value.filter(n => !delIds.has(n.id));
+              links.value = links.value.filter(l => !delIds.has(l.from) && !delIds.has(l.to));
+              selected.value.clear(); saveNotes(); saveLinks(); redrawLinks();
             }
           }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && editingId.value) { e.preventDefault(); commitEdit(); }
+          // Inicio rápido de conexión: Ctrl/Cmd + L con una sola nota seleccionada
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l') {
+            const ids = [...selected.value];
+            if (ids.length === 1) { e.preventDefault(); startLinkFrom(ids[0]); }
+          }
         };
 
         // ciclo
         onMounted(() => {
-          notes.value = load();
+          notes.value = loadNotes();
+          loadLinks();
           zTop.value = Math.max(10, ...notes.value.map(n => n.z || 10));
           nextTick(() => { boardRef.value?.addEventListener('contextmenu', (e) => e.preventDefault()); });
           document.addEventListener('mousedown', onDocMouseDown);
           window.addEventListener('keydown', onKey);
+          window.addEventListener('resize', () => requestAnimationFrame(redrawLinks));
           if (window.lucide?.createIcons) setTimeout(() => window.lucide.createIcons(), 0);
+
+          // debug de funciones (confirmar que existen)
+          console.log('[CN] fns:',
+            'startLinkFrom=', typeof startLinkFrom,
+            'completeLinkTo=', typeof completeLinkTo,
+            'hasLinks=', typeof hasLinks,
+            'removeLinksOf=', typeof removeLinksOf
+          );
+
+          redrawLinks();
         });
 
         return {
+          // estado/UI
           colors, notes, draft, ctx, boardRef,
+          links, linkSourceId,
           editingId, editDraft, startEdit, commitEdit, cancelEdit,
           colorName, isSelected,
+          // CRUD notas
           addRandom, createAt,
           onDragStart, onDragMove, onDragEnd,
           bringFront, removeNote, duplicate, recolor,
           onNoteClick, toggleSelect, clearSelection,
+          // Conexiones
+          startLinkFrom, completeLinkTo, hasLinks, removeLinksOf,
+          // Menú
           openCtxOnBoard, openCtxOnNote, closeCtx
         };
       }
@@ -219,7 +376,6 @@
     const el = document.getElementById('comedy-notes-app');
     if (!el) return false;
 
-    // Tomamos el HTML ya inyectado como template y limpiamos el contenedor
     const tpl = el.innerHTML;
     el.innerHTML = '';
 

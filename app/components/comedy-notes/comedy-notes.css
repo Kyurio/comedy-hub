@@ -3,18 +3,18 @@
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: .75rem;
 }
 
 .cn__title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
 }
 
 .cn__tools {
   display: flex;
-  gap: 0.5rem;
+  gap: .5rem;
   align-items: center;
 }
 
@@ -22,8 +22,8 @@
 .cn__tools select {
   background: #0b0b0c;
   border: 1px solid #2a2a2a;
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.6rem;
+  border-radius: .6rem;
+  padding: .45rem .6rem;
   color: #e7e7ea;
 }
 
@@ -31,8 +31,8 @@
   background: #171717;
   border: 1px solid #2a2a2a;
   color: #e7e7ea;
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.7rem;
+  border-radius: .6rem;
+  padding: .45rem .7rem;
 }
 
 .btn--primary {
@@ -50,16 +50,35 @@
   overflow: hidden;
 }
 
+/* Overlay SVG para conexiones */
+.cn__links {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cn-link {
+  fill: none;
+  stroke: #9ca3af;
+  stroke-width: 2;
+}
+
+.cn-link-dot {
+  fill: #9ca3af;
+}
+
 .cn__note {
   position: absolute;
   min-width: 180px;
   max-width: 320px;
-  border-radius: 0.9rem;
-  padding: 0.65rem 0.8rem;
+  border-radius: .9rem;
+  padding: .65rem .8rem;
   border: 1px solid transparent;
   cursor: grab;
   user-select: none;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
 }
 
 .cn__note:active {
@@ -67,12 +86,12 @@
 }
 
 .cn__note h4 {
-  margin: 0 0 0.35rem 0;
+  margin: 0 0 .35rem 0;
 }
 
 .cn__note p {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: .95rem;
 }
 
 .note--sky {
@@ -106,11 +125,11 @@
 }
 
 .muted {
-  opacity: 0.7;
-  margin-top: 0.6rem;
+  opacity: .7;
+  margin-top: .6rem;
 }
 
-
+/* Menú contextual */
 .cn__ctx {
   position: absolute;
   z-index: 9999;
@@ -168,19 +187,20 @@
   width: 100%;
   min-height: 110px;
   resize: vertical;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, .02);
   color: inherit;
-  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border: 1px dashed rgba(255, 255, 255, .25);
   border-radius: 8px;
   padding: 8px 10px;
   outline: none;
 }
 
 .cn__edit:focus {
-  border-color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, .45);
+  background: rgba(255, 255, 255, .04);
 }
 
+/* Cursores */
 .cn__note {
   cursor: grab;
 }
