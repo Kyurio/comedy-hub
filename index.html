@@ -19,10 +19,16 @@
 
 <body class="bg-neutral-950 text-neutral-200 font-sans">
 
-    <div class="loader"></div>
+    <!-- PRELOADER OVERLAY -->
+    <div id="preloader" class="preloader">
+        <div class="preloader__inner">
+            <img src="public/img/logo.png" alt="Comedy Hub" width="180" height="48" class="preloader__logo">
+            <div class="loader"></div> <!-- tu spinner actual -->
+        </div>
+    </div>
 
     <!-- NAV -->
-    <nav class="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+    <nav data-reveal style="--d:120ms" class="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
         <div class="text-xl font-bold">Comedy Hub</div>
         <ul class="flex gap-6 text-sm text-neutral-400">
             <li><a href="#" class="hover:text-white">Docs</a></li>
@@ -31,8 +37,9 @@
         </ul>
     </nav>
 
+
     <!-- HERO -->
-    <header class="px-6 py-20 text-center max-w-3xl mx-auto">
+    <header data-reveal style="--d:220ms" class="px-6 py-20 text-center max-w-3xl mx-auto">
         <img src="public/img/logo.png" alt="Comedy Hub" class="mx-auto" width="360" height="96" />
         <p class="text-neutral-400">Tu espacio central para crear, organizar y crecer con tus ideas de comedia.</p>
     </header>
@@ -111,6 +118,7 @@
     <script type="module" src="app/components/comedy-builder/comedy-builder.js"></script>
     <!-- App (escucha clicks y hace fetch + openOffcanvas) -->
     <script src="app/js/app.js"></script>
+    <script src="app/js/functions.js"></script>
 
 
 </body>

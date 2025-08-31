@@ -1,5 +1,5 @@
 <section id="comedy-builder-app" class="gw" aria-label="Guion a Colores">
-    <!-- Aside izquierdo -->
+    <!-- Aside izquierdo (sticky + scrollspy) -->
     <aside class="gw__aside">
         <header class="gw__asideHead">
             <h3>Segmentos</h3>
@@ -7,12 +7,21 @@
         </header>
 
         <nav class="gw__segList">
-            <button v-for="s in segs" :key="s.id" class="gw__segItem" :class="{ 'is-active': s.id === currentSegId }"
-                @click="currentSegId = s.id">
+            <button v-for="s in segs" :key="s.id" class="gw__segItem" :data-id="s.id"
+                :class="{ 'is-active': s.id === currentSegId }" @click="currentSegId = s.id; scrollToSeg(s.id)"
+                title="Ir a este segmento">
                 <span class="dot" :style="{background:s.color}"></span>
                 <input class="ghost" v-model="s.title" placeholder="Sin título" />
                 <span class="muted">{{ segDuration(s) }}</span>
             </button>
+
+            <!-- Acción rápida: vincular selección al segmento activo -->
+            <div class="gw__segActions">
+                <button class="btn btn--sm" @click="assignSelectionToCurrentSeg()"
+                    title="Asignar selección al segmento activo">
+                    Vincular selección
+                </button>
+            </div>
         </nav>
     </aside>
 
@@ -42,14 +51,11 @@
             </article>
         </section>
 
-        <!-- Menú contextual -->
+        <!-- Menú contextual: SOLO Vincular sección -->
         <div v-if="ctx.visible" class="gw__ctx" :style="{left: ctx.x+'px', top: ctx.y+'px'}" @mousedown.stop>
-            <div class="gw__ctx-title">Etiquetas</div>
-            <button class="gw__ctx-item" v-for="t in TYPES" :key="t.id" @click="applyTag(t.id)">
-                {{ t.label }}
+            <button class="gw__ctx-item" @click="assignSelectionToCurrentSeg()">
+                Vincular sección al segmento activo
             </button>
-            <hr />
-            <button class="gw__ctx-item danger" @click="removeTag()">Quitar etiqueta</button>
         </div>
     </main>
 
@@ -69,7 +75,8 @@
         </div>
 
         <p class="muted" style="margin-top:12px">
-            Tip: Selecciona texto y haz <b>click derecho</b> o usa <b>Ctrl/Cmd + M</b> para etiquetar.
+            Tip: Selecciona texto y usa <b>Ctrl/Cmd + G</b> para asignar al segmento actual.
+            Salta con <b>Ctrl/Cmd + J</b>.
         </p>
     </aside>
 </section>

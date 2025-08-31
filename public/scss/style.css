@@ -41,3 +41,62 @@
         transform: rotate(90deg)
     }
 }
+
+/* ========== PRELOADER OVERLAY (pantalla completa blanca) ========== */
+.preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #111;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .6s ease, visibility .6s ease;
+}
+
+.preloader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.preloader__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.preloader__logo {
+    filter: none;
+    opacity: .95;
+}
+
+.preloader__text {
+    font-size: .9rem;
+    color: #333;
+}
+
+/* (Tu loader existente se mantiene) */
+
+/* ========== REVEAL INICIAL (fade + slide suave) ========== */
+[data-reveal] {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+        opacity .6s cubic-bezier(.22, .61, .36, 1) var(--d, 0ms),
+        transform .6s cubic-bezier(.22, .61, .36, 1) var(--d, 0ms);
+}
+
+body.is-loaded [data-reveal] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Tip extra: mejora el render durante la animación */
+[data-reveal] {
+    will-change: transform, opacity;
+}
