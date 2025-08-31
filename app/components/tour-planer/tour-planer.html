@@ -1,0 +1,46 @@
+<section id="tour-planer-app" class="tp" data-tp-root>
+    <header class="tp__head">
+        <div class="tp__title">
+            <i data-lucide="calendar-days" class="w-5 h-5"></i>
+            <h2>Tour Planner</h2>
+        </div>
+        <div class="tp__controls">
+            <button id="tpPrev" class="btn">←</button>
+            <div id="tpMonth" class="tp__month">Mes</div>
+            <button id="tpNext" class="btn">→</button>
+        </div>
+    </header>
+
+    <div class="tp__legend">
+        <span class="dot dot--ok"></span> Confirmado
+        <span class="dot dot--tent"></span> Tentativo
+        <span class="dot dot--rehe"></span> Ensayo
+    </div>
+
+    <div id="tpWeek" class="tp__week"></div>
+    <div id="tpCalendar" class="tp__grid"><!-- celdas en JS --></div>
+
+    <aside id="tpDetail" class="tp__detail">
+        <h3>Detalle</h3>
+        <p class="muted">Fecha: <strong id="tpDate">—</strong></p>
+        <form class="tp__form">
+            <label>Ciudad<input id="tpCity" type="text" /></label>
+            <label>Lugar<input id="tpVenue" type="text" /></label>
+            <label>Hora<input id="tpTime" type="time" /></label>
+            <label>Tipo
+                <select id="tpType">
+                    <option value="ok">Confirmado</option>
+                    <option value="tent">Tentativo</option>
+                    <option value="rehe">Ensayo</option>
+                </select>
+            </label>
+            <label>Notas<textarea id="tpNotes" rows="3"></textarea></label>
+            <div class="tp__export-actions">
+                <button id="tpExportIMG" class="btn btn--primary">Descargar imagen</button>
+                <button id="tpExportCopy" class="btn">Copiar</button>
+                <button id="tpExportClose" class="btn">Cerrar</button>
+            </div>
+
+        </form>
+    </aside>
+</section>

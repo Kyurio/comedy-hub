@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comedy Hub — José a secas</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="app/components/comedy-notes/comedy-notes.css" />
+    <link rel="stylesheet" href="app/components/tour-planer/tour-planer.css" />
+    <link rel="stylesheet" href="app/components/comedy-builder/comedy-builder.css" />
+    <link rel="stylesheet" href="public/scss/style.css" />
+</head>
+
+<body class="bg-neutral-950 text-neutral-200 font-sans">
+
+    <div class="loader"></div>
+
+    <!-- NAV -->
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+        <div class="text-xl font-bold">Comedy Hub</div>
+        <ul class="flex gap-6 text-sm text-neutral-400">
+            <li><a href="#" class="hover:text-white">Docs</a></li>
+            <li><a href="#" class="hover:text-white">Soporte</a></li>
+            <li><a href="#" class="hover:text-white">Changelog</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header class="px-6 py-20 text-center max-w-3xl mx-auto">
+        <img src="public/img/logo.png" alt="Comedy Hub" class="mx-auto" width="360" height="96" />
+        <p class="text-neutral-400">Tu espacio central para crear, organizar y crecer con tus ideas de comedia.</p>
+    </header>
+
+    <!-- APPS GRID -->
+    <main class="px-6 max-w-6xl mx-auto">
+        <section id="apps" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card -->
+            <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
+                <header class="flex items-center gap-3 mb-3">
+                    <i data-lucide="puzzle" class="w-6 h-6 text-sky-400"></i>
+                </header>
+                <p class="text-sm text-neutral-400">
+                    Escribe guiones en colores (Premisa → Desarrollo → Clímax → Quiebre).
+                </p>
+                <button class="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm"
+                    data-open="comedy-builder">Abrir</button>
+            </article>
+
+            <!-- ejemplo Comedy Notes -->
+            <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
+                <header class="flex items-center gap-3 mb-3">
+                    <i data-lucide="sticky-note" class="w-6 h-6 text-yellow-400"></i>
+                    <h2 class="font-semibold text-lg">Comedy Notes</h2>
+                </header>
+                <p class="text-sm text-neutral-400 mb-4">Pizarra libre con notas de colores movibles.</p>
+                <button class="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm"
+                    data-open="comedy-notes">Abrir</button>
+            </article>
+
+            <!-- ejemplo Tour Planner -->
+            <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
+                <header class="flex items-center gap-3 mb-3">
+                    <i data-lucide="calendar-days" class="w-6 h-6 text-fuchsia-400"></i>
+                    <h2 class="font-semibold text-lg">Tour Planner</h2>
+                </header>
+                <p class="text-sm text-neutral-400 mb-4">Calendario mensual con estados por color y detalle.</p>
+                <button class="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm"
+                    data-open="tour-planer">Abrir</button>
+            </article>
+
+        </section>
+    </main>
+
+    <!-- OFFCANVAS: pantalla completa -->
+    <div id="ocRoot" class="fixed inset-0 z-50 hidden">
+        <div id="ocBackdrop" class="absolute inset-0 bg-black/70 opacity-0 transition-opacity"></div>
+        <aside id="ocPanel"
+            class="absolute inset-0 bg-neutral-950 border-l border-neutral-800 translate-x-full transition-transform">
+            <header class="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+                <div class="flex items-center gap-2">
+                    <i id="ocIcon" data-lucide="panel-right" class="w-5 h-5 text-neutral-400"></i>
+                    <h3 id="ocTitle" class="text-lg font-semibold">Módulo</h3>
+                </div>
+                <button id="ocClose" class="p-2 rounded-lg hover:bg-neutral-900" aria-label="Cerrar">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </header>
+            <section id="ocContent" class="p-6 h-[calc(100%-64px)] overflow-auto"></section>
+        </aside>
+    </div>
+
+    <!-- Fallbacks zero-server -->
+    <template id="tpl-tour-planer"></template>
+    <template id="tpl-comedy-notes"></template>
+    <template id="tpl-comedy-builder"></template>
+
+
+    <!-- Scripts: todo externo y ordenado -->
+    <!-- Vue ANTES de los módulos que lo usan -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <!-- Módulos -->
+    <script type="module" src="app/components/comedy-notes/comedy-notes.js"></script>
+    <script type="module" src="app/components/tour-planer/tour-planer.js"></script>
+    <script type="module" src="app/components/comedy-builder/comedy-builder.js"></script>
+    <!-- App (escucha clicks y hace fetch + openOffcanvas) -->
+    <script src="app/js/app.js"></script>
+
+
+</body>
+
+</html>

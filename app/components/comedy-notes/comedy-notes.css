@@ -1,0 +1,194 @@
+.cn__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.cn__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cn__tools {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cn__tools input,
+.cn__tools select {
+  background: #0b0b0c;
+  border: 1px solid #2a2a2a;
+  border-radius: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  color: #e7e7ea;
+}
+
+.btn {
+  background: #171717;
+  border: 1px solid #2a2a2a;
+  color: #e7e7ea;
+  border-radius: 0.6rem;
+  padding: 0.45rem 0.7rem;
+}
+
+.btn--primary {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #0b0b0c;
+}
+
+.cn__board {
+  position: relative;
+  height: 70vh;
+  border: 1px dashed #2a2a2a;
+  border-radius: 1rem;
+  background: #0f0f10;
+  overflow: hidden;
+}
+
+.cn__note {
+  position: absolute;
+  min-width: 180px;
+  max-width: 320px;
+  border-radius: 0.9rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid transparent;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.cn__note:active {
+  cursor: grabbing;
+}
+
+.cn__note h4 {
+  margin: 0 0 0.35rem 0;
+}
+
+.cn__note p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.note--sky {
+  background: #061a24;
+  border-color: #0ea5e9;
+  color: #dbeafe;
+}
+
+.note--emerald {
+  background: #062012;
+  border-color: #22c55e;
+  color: #dcfce7;
+}
+
+.note--amber {
+  background: #261a04;
+  border-color: #f59e0b;
+  color: #fef3c7;
+}
+
+.note--fuchsia {
+  background: #221228;
+  border-color: #a78bfa;
+  color: #fae8ff;
+}
+
+.note--slate {
+  background: #1a1c1f;
+  border-color: #64748b;
+  color: #e2e8f0;
+}
+
+.muted {
+  opacity: 0.7;
+  margin-top: 0.6rem;
+}
+
+
+.cn__ctx {
+  position: absolute;
+  z-index: 9999;
+  min-width: 180px;
+  background: #111827;
+  color: #e5e7eb;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
+}
+
+.cn__ctx-title {
+  font-size: 12px;
+  opacity: .7;
+  padding: 6px 8px;
+}
+
+.cn__ctx-subtitle {
+  font-size: 11px;
+  opacity: .7;
+  padding: 4px 8px 2px;
+}
+
+.cn__ctx-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cn__ctx-item:hover {
+  background: rgba(255, 255, 255, .06);
+}
+
+.cn__ctx-item.danger {
+  color: #fca5a5;
+}
+
+.cn__note.is-selected {
+  outline: 2px dashed rgba(255, 255, 255, .35);
+  outline-offset: 2px;
+}
+
+.cn__body {
+  white-space: pre-wrap;
+}
+
+.cn__edit {
+  width: 100%;
+  min-height: 110px;
+  resize: vertical;
+  background: rgba(255, 255, 255, 0.02);
+  color: inherit;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  outline: none;
+}
+
+.cn__edit:focus {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cn__note {
+  cursor: grab;
+}
+
+.cn__note:active {
+  cursor: grabbing;
+}
+
+.cn__edit {
+  cursor: text;
+}

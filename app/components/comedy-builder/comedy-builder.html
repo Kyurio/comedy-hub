@@ -1,0 +1,75 @@
+<section id="comedy-builder-app" class="gw" aria-label="Guion a Colores">
+    <!-- Aside izquierdo -->
+    <aside class="gw__aside">
+        <header class="gw__asideHead">
+            <h3>Segmentos</h3>
+            <button class="btn btn--sm" @click="addSegment()">+ Seg.</button>
+        </header>
+
+        <nav class="gw__segList">
+            <button v-for="s in segs" :key="s.id" class="gw__segItem" :class="{ 'is-active': s.id === currentSegId }"
+                @click="currentSegId = s.id">
+                <span class="dot" :style="{background:s.color}"></span>
+                <input class="ghost" v-model="s.title" placeholder="Sin título" />
+                <span class="muted">{{ segDuration(s) }}</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Editor central -->
+    <main class="gw__editor" @contextmenu.prevent="openCtxEditor($event)">
+        <header class="gw__head">
+            <div class="gw__title">
+                <h2 contenteditable @input="meta.title = $event.target.innerText.trim()">
+                    {{ meta.title || 'Guion sin título' }}
+                </h2>
+            </div>
+
+            <div class="gw__controls">
+                <label class="chip">
+                    WPM <input type="number" min="60" max="220" v-model.number="wpmSimple">
+                </label>
+                <button class="btn" @click="copyAllSimple()">Copiar</button>
+                <button class="btn" @click="downloadSimple('txt')">.txt</button>
+                <button class="btn btn--primary" @click="downloadSimple('md')">.md</button>
+            </div>
+        </header>
+
+        <!-- Hoja en blanco -->
+        <section class="gw__sheetWrap" @contextmenu.prevent="openCtx($event)">
+            <article id="simpleSheet" class="gw__sheet" contenteditable="true" spellcheck="false"
+                placeholder="Escribe tu guion aquí… (Ctrl+S guarda .txt, Ctrl+Shift+S guarda .md)">
+            </article>
+        </section>
+
+        <!-- Menú contextual -->
+        <div v-if="ctx.visible" class="gw__ctx" :style="{left: ctx.x+'px', top: ctx.y+'px'}" @mousedown.stop>
+            <div class="gw__ctx-title">Etiquetas</div>
+            <button class="gw__ctx-item" v-for="t in TYPES" :key="t.id" @click="applyTag(t.id)">
+                {{ t.label }}
+            </button>
+            <hr />
+            <button class="gw__ctx-item danger" @click="removeTag()">Quitar etiqueta</button>
+        </div>
+    </main>
+
+    <!-- Panel derecho -->
+    <aside class="gw__panel">
+        <h3>Métricas</h3>
+        <ul class="stats">
+            <li><span>Total palabras</span><strong>{{ totalWordsSimple }}</strong></li>
+            <li><span>Párrafos</span><strong>{{ paragraphsSimple }}</strong></li>
+            <li><span>Duración</span><strong>{{ timeLabelSimple }}</strong></li>
+        </ul>
+
+        <h4 style="margin-top:.75rem">Ritmo</h4>
+        <div class="range">
+            <input type="range" min="90" max="190" step="5" v-model.number="wpmSimple" />
+            <b style="min-width:3ch;text-align:right">{{ wpmSimple }}</b>
+        </div>
+
+        <p class="muted" style="margin-top:12px">
+            Tip: Selecciona texto y haz <b>click derecho</b> o usa <b>Ctrl/Cmd + M</b> para etiquetar.
+        </p>
+    </aside>
+</section>

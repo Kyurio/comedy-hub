@@ -1,0 +1,87 @@
+<section class="cn" id="comedy-notes-app">
+  <header class="cn__head">
+    <div class="cn__title">
+      <i data-lucide="sticky-note" class="w-5 h-5"></i>
+      <h2>Comedy Notes</h2>
+    </div>
+
+    <!-- Herramientas -->
+    <div class="cn__tools">
+      <input v-model="draft.text" type="text" placeholder="Nueva idea…" @keydown.ctrl.enter.prevent="addRandom()" />
+      <select v-model="draft.color">
+        <option v-for="c in colors" :key="c" :value="c">{{ colorName(c) }}</option>
+      </select>
+      <button class="btn btn--primary" @click="addRandom()">Añadir</button>
+    </div>
+  </header>
+
+  <!-- Lienzo -->
+  <div class="cn__board" id="cnBoard" aria-label="Lienzo de ideas" @contextmenu.prevent="openCtxOnBoard($event)"
+    @mousedown.self="clearSelection()" ref="boardRef">
+
+    <!-- Nota -->
+    <!-- Nota -->
+    <article v-for="n in notes" :key="n.id" class="cn__note"
+      :class="['note--'+n.color, isSelected(n.id)?'is-selected':'']"
+      :style="{ left: n.x+'px', top: n.y+'px', zIndex: n.z }" 
+      @pointerdown="onDragStart($event, n)"
+
+      @click.stop="onNoteClick($event, n)"
+      @dblclick.stop="startEdit(n)"
+
+      @contextmenu.stop.prevent="openCtxOnNote($event, n)"
+      >
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.35rem">
+        <h4 style="margin:0">Idea</h4>
+        <div style="display:flex;gap:.35rem;align-items:center">
+          <button class="cnDel" title="Eliminar" aria-label="Eliminar"
+            style="background:transparent;border:0;color:inherit;opacity:.7" @click.stop="removeNote(n.id)">×</button>
+        </div>
+      </div>
+
+      <div class="cn__body">
+        <template v-if="editingId === n.id">
+          <textarea v-model="editDraft" class="cn__edit" rows="6" placeholder="Escribe tu idea…" @blur="commitEdit()"
+            @keydown.esc.prevent="cancelEdit()" @keydown.ctrl.enter.prevent="commitEdit()"
+            @keydown.meta.enter.prevent="commitEdit()"></textarea>
+        </template>
+        <template v-else>
+          <p>{{ n.text }}</p>
+        </template>
+      </div>
+    </article>
+
+
+    <!-- Menú contextual -->
+    <div v-if="ctx.visible" class="cn__ctx" :style="{ left: ctx.x+'px', top: ctx.y+'px' }" @mousedown.stop>
+      <template v-if="ctx.type==='board'">
+        <div class="cn__ctx-title">Nueva nota aquí</div>
+        <button class="cn__ctx-item" v-for="c in colors" :key="c" @click="createAt(ctx.boardX, ctx.boardY, c)">
+          {{ colorName(c) }}
+        </button>
+        <hr />
+        <button class="cn__ctx-item" @click="clearSelection()">Limpiar selección</button>
+      </template>
+
+      <template v-else>
+        <div class="cn__ctx-title">Nota</div>
+        <button class="cn__ctx-item" @click="toggleSelect(ctx.note.id)">
+          {{ isSelected(ctx.note.id) ? 'Quitar de selección' : 'Seleccionar' }}
+        </button>
+        <button class="cn__ctx-item" @click="duplicate(ctx.note)">Duplicar</button>
+        <div class="cn__ctx-subtitle">Color</div>
+        <button class="cn__ctx-item" v-for="c in colors" :key="c" @click="recolor(ctx.note, c)">
+          {{ colorName(c) }}
+        </button>
+        <hr />
+        <button class="cn__ctx-item danger" @click="removeNote(ctx.note.id)">Eliminar</button>
+      </template>
+    </div>
+  </div>
+
+  <p class="muted">
+    Tip: Click derecho para crear/cambiar color. Shift+click para multi-selección.
+    Arrastra para mover (mueve el grupo si hay varios seleccionados).
+    Delete elimina selección. Esc limpia selección.
+  </p>
+</section>
