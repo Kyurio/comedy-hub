@@ -8,7 +8,7 @@
     --ring: #0ea5e9;
 }
 
-/* Layout general (igual a tu estilo base) */
+/* ===== Layout general ===== */
 .gw {
     display: grid;
     grid-template-columns: var(--gw-aside) 1fr var(--gw-right);
@@ -33,6 +33,7 @@
     }
 }
 
+/* Utilitarios */
 .muted {
     color: var(--muted);
     font-size: .8rem;
@@ -51,7 +52,7 @@
     color: #e7e7ea;
     border-radius: .6rem;
     padding: .45rem .7rem;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .btn--sm {
@@ -82,12 +83,16 @@
     color: #e7e7ea;
 }
 
-/* Aside izquierdo */
+/* ===== Aside izquierdo ===== */
 .gw__aside {
     background: var(--bg);
     border: 1px solid var(--bd);
     border-radius: 1rem;
     padding: .75rem;
+    position: sticky;
+    top: 12px;
+    align-self: start;
+    max-height: calc(100vh - 24px);
 }
 
 .gw__asideHead {
@@ -100,6 +105,8 @@
 .gw__segList {
     display: grid;
     gap: .5rem;
+    overflow: auto;
+    max-height: calc(100vh - 120px);
 }
 
 .gw__segItem {
@@ -126,10 +133,13 @@
     width: 100%;
 }
 
-/* Editor central */
+/* ===== Editor central ===== */
 .gw__editor {
     display: grid;
     gap: .75rem;
+    position: relative;
+    /* clave: ancla del menú contextual */
+    z-index: 0;
 }
 
 .gw__head {
@@ -144,7 +154,15 @@
     font-weight: 800;
 }
 
-/* Panel derecho */
+/* Evitar título “al revés” en contenteditable */
+.gw__title h2[contenteditable] {
+    direction: ltr;
+    unicode-bidi: plaintext;
+    text-align: left;
+    caret-color: #e7e7ea;
+}
+
+/* ===== Panel derecho ===== */
 .gw__panel {
     background: var(--bg);
     border: 1px solid var(--bd);
@@ -181,7 +199,7 @@
     width: 100%;
 }
 
-/* --- Hoja en blanco --- */
+/* ===== Hoja ===== */
 .gw__sheetWrap {
     display: grid;
 }
@@ -207,7 +225,7 @@
     color: #6b7280;
 }
 
-/* Etiquetas suaves */
+/* ===== Etiquetas suaves ===== */
 mark[data-tag] {
     padding: 0 2px;
     border-radius: 6px;
@@ -258,10 +276,11 @@ mark[data-tag="twist"] {
     border: 1px solid #ef444466;
 }
 
-/* Menú contextual */
+/* ===== Menú contextual ===== */
 .gw__ctx {
     position: absolute;
-    z-index: 9999;
+    /* relativo a .gw__editor */
+    z-index: 50;
     min-width: 220px;
     background: #111827;
     color: #e5e7eb;
@@ -296,52 +315,3 @@ mark[data-tag="twist"] {
     color: #fca5a5;
 }
 
-/* Sticky aside */
-.gw {
-    display: grid;
-    grid-template-columns: 280px 1fr 260px;
-    gap: 16px;
-}
-
-.gw__aside {
-    position: sticky;
-    top: 12px;
-    align-self: start;
-    max-height: calc(100vh - 24px);
-}
-
-.gw__segList {
-    overflow: auto;
-    max-height: calc(100vh - 120px);
-}
-
-/* Resaltado de trozos vinculados */
-.seg-chunk {
-    transition: box-shadow .2s ease, background .2s ease;
-}
-
-.seg-chunk.pulse {
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, .25) inset;
-}
-
-/* Item activo en la lista */
-.gw__segItem.is-active {
-    outline: 2px solid rgba(255, 255, 255, .15);
-}
-
-/* Menú contextual compacto */
-.gw__ctx {
-    position: absolute;
-    z-index: 50;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 8px;
-}
-
-.gw__ctx-item {
-    display: block;
-    width: 100%;
-    padding: 8px 10px;
-    text-align: left;
-}

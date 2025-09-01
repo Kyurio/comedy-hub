@@ -10,20 +10,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Custom CSS -->
+
+    <!-- Component CSS -->
     <link rel="stylesheet" href="app/components/comedy-notes/comedy-notes.css" />
     <link rel="stylesheet" href="app/components/tour-planer/tour-planer.css" />
     <link rel="stylesheet" href="app/components/comedy-builder/comedy-builder.css" />
+    <link rel="stylesheet" href="app/components/profile/profile.css" />
+    <!-- Global -->
     <link rel="stylesheet" href="public/scss/style.css" />
 </head>
 
 <body class="bg-neutral-950 text-neutral-200 font-sans">
-
     <!-- PRELOADER OVERLAY -->
     <div id="preloader" class="preloader">
         <div class="preloader__inner">
             <img src="public/img/logo.png" alt="Comedy Hub" width="180" height="48" class="preloader__logo">
-            <div class="loader"></div> <!-- tu spinner actual -->
+            <div class="loader"></div>
         </div>
     </div>
 
@@ -34,14 +36,13 @@
             <li><a href="#" class="hover:text-white">Docs</a></li>
             <li><a href="#" class="hover:text-white">Soporte</a></li>
             <li><a href="#" class="hover:text-white">Changelog</a></li>
+            <li><a href="#" class="hover:text-white" data-open="profile">Profile</a></li>
             <li>
                 <!-- Botón tema -->
                 <button id="themeToggle" class="p-2 rounded hover:bg-neutral-800" aria-label="Cambiar tema">🌓</button>
             </li>
         </ul>
     </nav>
-
-
 
     <!-- HERO -->
     <header data-reveal style="--d:220ms" class="px-6 py-20 text-center max-w-3xl mx-auto">
@@ -52,7 +53,7 @@
     <!-- APPS GRID -->
     <main class="px-6 max-w-6xl mx-auto">
         <section id="apps" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Card -->
+            <!-- Guion a Colores -->
             <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
                 <header class="flex items-center gap-3 mb-3">
                     <i data-lucide="puzzle" class="w-6 h-6 text-sky-400"></i>
@@ -64,7 +65,7 @@
                     data-open="comedy-builder">Abrir</button>
             </article>
 
-            <!-- ejemplo Comedy Notes -->
+            <!-- Comedy Notes -->
             <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
                 <header class="flex items-center gap-3 mb-3">
                     <i data-lucide="sticky-note" class="w-6 h-6 text-yellow-400"></i>
@@ -75,7 +76,7 @@
                     data-open="comedy-notes">Abrir</button>
             </article>
 
-            <!-- ejemplo Tour Planner -->
+            <!-- Tour Planner -->
             <article class="bg-neutral-900 border border-neutral-800 rounded-2xl p-5 hover:border-sky-500 transition">
                 <header class="flex items-center gap-3 mb-3">
                     <i data-lucide="calendar-days" class="w-6 h-6 text-fuchsia-400"></i>
@@ -85,11 +86,10 @@
                 <button class="px-3 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm"
                     data-open="tour-planer">Abrir</button>
             </article>
-
         </section>
     </main>
 
-    <!-- OFFCANVAS: pantalla completa -->
+    <!-- OFFCANVAS -->
     <div id="ocRoot" class="fixed inset-0 z-50 hidden">
         <div id="ocBackdrop" class="absolute inset-0 bg-black/70 opacity-0 transition-opacity"></div>
         <aside id="ocPanel"
@@ -111,21 +111,20 @@
     <template id="tpl-tour-planer"></template>
     <template id="tpl-comedy-notes"></template>
     <template id="tpl-comedy-builder"></template>
+    <template id="tpl-profile"></template>
 
-
-    <!-- Scripts: todo externo y ordenado -->
-    <!-- Vue ANTES de los módulos que lo usan -->
+    <!-- Vue -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
     <!-- Módulos -->
     <script type="module" src="app/components/comedy-notes/comedy-notes.js"></script>
     <script type="module" src="app/components/tour-planer/tour-planer.js"></script>
     <script type="module" src="app/components/comedy-builder/comedy-builder.js"></script>
-    <!-- App (escucha clicks y hace fetch + openOffcanvas) -->
+    <script type="module" src="app/components/profile/profile.js"></script>
+
+    <!-- App (router offcanvas + helpers) -->
     <script src="app/js/app.js"></script>
     <script src="app/js/functions.js"></script>
-
-
 </body>
 
 </html>

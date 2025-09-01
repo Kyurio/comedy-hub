@@ -1,0 +1,32 @@
+<section id="profile-app" class="card">
+    <header class="card__head">
+        <h2>Tu Perfil</h2>
+        <p class="muted">Esta foto y datos pueden usarse en el Tour Planner al exportar el póster.</p>
+    </header>
+
+    <div class="grid">
+        <div class="avatar">
+            <div class="thumb" id="pfThumb">Sin foto</div>
+            <div class="actions">
+                <input id="pfFile" type="file" accept="image/*" hidden />
+                <button class="btn btn--primary" id="pfBtnUpload">Subir foto</button>
+                <button class="btn" id="pfBtnRemove">Quitar</button>
+            </div>
+        </div>
+
+        <form class="form" id="pfForm">
+            <label>
+                <span>Nombre</span>
+                <input id="pfName" type="text" placeholder="Tu nombre artístico" />
+            </label>
+            <label>
+                <span>Handle / red (opcional)</span>
+                <input id="pfHandle" type="text" placeholder="@tuhandle" />
+            </label>
+            <div class="inline">
+                <button class="btn btn--primary" type="submit">Guardar</button>
+                <span class="muted" id="pfSaved" aria-live="polite"></span>
+            </div>
+        </form>
+    </div>
+</section>

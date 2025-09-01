@@ -2,8 +2,6 @@
 const VueGlobal = (typeof window !== 'undefined' && window.Vue) ? window.Vue : Vue;
 const { createApp, reactive, ref, computed, onMounted, nextTick, watch } = VueGlobal;
 
-console.log('[CB] comedy-builder.js cargado');
-
 // --- Storage keys ---
 const SIMPLE_STORAGE_HTML = 'comedyhub_simple_sheet_v1';
 const SIMPLE_STORAGE_TITLE = 'comedyhub_simple_title_v1';
@@ -60,12 +58,30 @@ function makeApp() {
                 span.className = 'seg-chunk';
                 span.id = 'seg-' + seg.id;
                 span.dataset.segId = seg.id;
-                span.style.background = `linear-gradient(transparent 65%, ${rgba(seg.color, .35)} 0)`;
-                span.style.borderBottom = `2px solid ${seg.color}`;
+
+                // Conservamos variables (por si más adelante quieres un estilo sutil)
+                const rgba = (hex, alpha = .25) => {
+                    const h = (hex || '#999999').replace('#', '');
+                    const r = parseInt(h.slice(0, 2), 16) || 153;
+                    const g = parseInt(h.slice(2, 4), 16) || 153;
+                    const b = parseInt(h.slice(4, 6), 16) || 153;
+                    return `rgba(${r},${g},${b},${alpha})`;
+                };
+                span.style.setProperty('--seg-color', rgba(seg.color, .75));
+                span.style.setProperty('--seg-hover', rgba(seg.color, .08));
+
+                // 🔸 sin subrayado ni bordes
+                span.style.textDecoration = 'none';
+                span.style.background = 'transparent';
+                span.style.borderBottom = '0';
+
                 span.appendChild(frag);
-                range.deleteContents(); range.insertNode(span);
+                range.deleteContents();
+                range.insertNode(span);
                 return span;
             }
+
+
             function assignSelectionToCurrentSeg() {
                 const sheet = document.getElementById('simpleSheet');
                 const sel = getSelectionIn(sheet); if (!sel) return;
@@ -162,7 +178,6 @@ function makeApp() {
             const copyAllSimple = () => navigator.clipboard.writeText(toPlainSimple()).catch(() => { });
 
             onMounted(() => {
-                console.log('[CB] Vue montado');
                 loadSegments();
                 const titleNode = document.querySelector('.gw__title [contenteditable]') || document.getElementById('titulo');
                 if (titleNode) { titleNode.addEventListener('input', () => { const v = titleNode.innerText.trim(); meta.title = v; localStorage.setItem(SIMPLE_STORAGE_TITLE, v); }); }
@@ -207,7 +222,7 @@ function tryMount() {
     const el = document.getElementById('comedy-builder-app');
     if (!el) return false;
     app = makeApp(); app.mount('#comedy-builder-app'); mounted = true;
-    console.log('[CB] app montada'); return true;
+    return true;
 }
 tryMount();
 const obs = new MutationObserver(() => { if (tryMount()) obs.disconnect(); });
