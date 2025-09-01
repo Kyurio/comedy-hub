@@ -1,3 +1,15 @@
+/* =========================
+   COMEDY NOTES (DS + THEME)
+   ========================= */
+
+/* Espera tokens globales (define en tu CSS base):
+   --bg, --surface, --surface-2, --border, --text, --text-muted, --ring,
+   --shadow, --overlay, --muted, --accent
+   Colores por nota (defaults razonables):
+   --sky-bg, --sky-border, --sky-text, etc.
+*/
+
+/* ---- Head / toolbar ---- */
 .cn__head {
   display: flex;
   justify-content: space-between;
@@ -20,34 +32,62 @@
 
 .cn__tools input,
 .cn__tools select {
-  background: #0b0b0c;
-  border: 1px solid #2a2a2a;
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: .6rem;
   padding: .45rem .6rem;
-  color: #e7e7ea;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
+.cn__tools input:focus,
+.cn__tools select:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 25%, transparent);
+}
+
+/* ---- Botones (usa tu .btn global si ya existe) ---- */
 .btn {
-  background: #171717;
-  border: 1px solid #2a2a2a;
-  color: #e7e7ea;
+  background: color-mix(in srgb, var(--surface) 90%, var(--text) 10%);
+  border: 1px solid var(--border);
+  color: var(--text);
   border-radius: .6rem;
   padding: .45rem .7rem;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: color-mix(in srgb, var(--surface) 80%, var(--text) 20%);
+  border-color: color-mix(in srgb, var(--border) 70%, var(--ring) 30%);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 .btn--primary {
-  background: #0ea5e9;
-  border-color: #0ea5e9;
+  background: var(--ring);
+  border-color: var(--ring);
   color: #0b0b0c;
+  /* buen contraste en ambos temas */
 }
 
+.btn--primary:hover {
+  filter: brightness(1.05);
+}
+
+/* ---- Lienzo ---- */
 .cn__board {
   position: relative;
   height: 70vh;
-  border: 1px dashed #2a2a2a;
+  border: 1px dashed var(--border);
   border-radius: 1rem;
-  background: #0f0f10;
+  background: var(--surface);
   overflow: hidden;
+  box-shadow: var(--shadow, 0 10px 24px rgba(0, 0, 0, .18));
 }
 
 /* Overlay SVG para conexiones */
@@ -61,32 +101,40 @@
 
 .cn-link {
   fill: none;
-  stroke: #9ca3af;
+  stroke: color-mix(in srgb, var(--text) 45%, transparent);
   stroke-width: 2;
 }
 
 .cn-link-dot {
-  fill: #9ca3af;
+  fill: color-mix(in srgb, var(--text) 55%, transparent);
 }
 
+/* ---- Notas ---- */
 .cn__note {
   position: absolute;
   min-width: 180px;
   max-width: 320px;
   border-radius: .9rem;
   padding: .65rem .8rem;
-  border: 1px solid transparent;
-  cursor: grab;
+  border: 1px solid var(--border);
   user-select: none;
+  cursor: grab;
   box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+  transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
 }
 
 .cn__note:active {
   cursor: grabbing;
 }
 
+.cn__note:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 .cn__note h4 {
   margin: 0 0 .35rem 0;
+  font-weight: 700;
 }
 
 .cn__note p {
@@ -94,63 +142,82 @@
   font-size: .95rem;
 }
 
+.cn__note.is-selected {
+  outline: 2px dashed color-mix(in srgb, var(--text) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* Paletas por tipo de nota (overridable desde tema global) */
+:root {
+  --sky-bg: #061a24;
+  --sky-border: #0ea5e9;
+  --sky-text: #dbeafe;
+  --emerald-bg: #062012;
+  --emerald-border: #22c55e;
+  --emerald-text: #dcfce7;
+  --amber-bg: #261a04;
+  --amber-border: #f59e0b;
+  --amber-text: #fef3c7;
+  --fuchsia-bg: #221228;
+  --fuchsia-border: #a78bfa;
+  --fuchsia-text: #fae8ff;
+  --slate-bg: #1a1c1f;
+  --slate-border: #64748b;
+  --slate-text: #e2e8f0;
+}
+
 .note--sky {
-  background: #061a24;
-  border-color: #0ea5e9;
-  color: #dbeafe;
+  background: var(--sky-bg);
+  border-color: var(--sky-border);
+  color: var(--sky-text);
 }
 
 .note--emerald {
-  background: #062012;
-  border-color: #22c55e;
-  color: #dcfce7;
+  background: var(--emerald-bg);
+  border-color: var(--emerald-border);
+  color: var(--emerald-text);
 }
 
 .note--amber {
-  background: #261a04;
-  border-color: #f59e0b;
-  color: #fef3c7;
+  background: var(--amber-bg);
+  border-color: var(--amber-border);
+  color: var(--amber-text);
 }
 
 .note--fuchsia {
-  background: #221228;
-  border-color: #a78bfa;
-  color: #fae8ff;
+  background: var(--fuchsia-bg);
+  border-color: var(--fuchsia-border);
+  color: var(--fuchsia-text);
 }
 
 .note--slate {
-  background: #1a1c1f;
-  border-color: #64748b;
-  color: #e2e8f0;
+  background: var(--slate-bg);
+  border-color: var(--slate-border);
+  color: var(--slate-text);
 }
 
-.muted {
-  opacity: .7;
-  margin-top: .6rem;
-}
-
-/* Menú contextual */
+/* ---- Menú contextual ---- */
 .cn__ctx {
   position: absolute;
-  z-index: 9999;
+  z-index: 60;
   min-width: 180px;
-  background: #111827;
-  color: #e5e7eb;
-  border: 1px solid #374151;
-  border-radius: 8px;
+  background: var(--surface-2, #111827);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   padding: 6px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
 }
 
 .cn__ctx-title {
   font-size: 12px;
-  opacity: .7;
+  color: var(--text-muted);
   padding: 6px 8px;
 }
 
 .cn__ctx-subtitle {
   font-size: 11px;
-  opacity: .7;
+  color: var(--text-muted);
   padding: 4px 8px 2px;
 }
 
@@ -161,24 +228,21 @@
   background: transparent;
   border: 0;
   color: inherit;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background .12s ease, color .12s ease;
 }
 
 .cn__ctx-item:hover {
-  background: rgba(255, 255, 255, .06);
+  background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .cn__ctx-item.danger {
   color: #fca5a5;
 }
 
-.cn__note.is-selected {
-  outline: 2px dashed rgba(255, 255, 255, .35);
-  outline-offset: 2px;
-}
-
+/* ---- Editor dentro de nota ---- */
 .cn__body {
   white-space: pre-wrap;
 }
@@ -187,20 +251,27 @@
   width: 100%;
   min-height: 110px;
   resize: vertical;
-  background: rgba(255, 255, 255, .02);
+  background: color-mix(in srgb, var(--text) 2%, transparent);
   color: inherit;
-  border: 1px dashed rgba(255, 255, 255, .25);
+  border: 1px dashed color-mix(in srgb, var(--text) 25%, transparent);
   border-radius: 8px;
   padding: 8px 10px;
   outline: none;
+  transition: border-color .12s ease, background .12s ease;
 }
 
 .cn__edit:focus {
-  border-color: rgba(255, 255, 255, .45);
-  background: rgba(255, 255, 255, .04);
+  border-color: color-mix(in srgb, var(--text) 45%, transparent);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
 }
 
-/* Cursores */
+/* ---- Utilitarios ---- */
+.muted {
+  color: var(--text-muted);
+  margin-top: .6rem;
+}
+
+/* Cursores explícitos (por si otros CSS los pisan) */
 .cn__note {
   cursor: grab;
 }

@@ -1,11 +1,15 @@
+/* =========================
+   COMEDY BUILDER (DS + THEME)
+   ========================= */
+/* Este archivo asume tokens globales:
+   --bg, --surface, --surface-2, --border, --text, --text-muted, --ring, --shadow
+*/
+
+/* ===== Vars locales ===== */
 :root {
     --gw-gap: .75rem;
     --gw-aside: 260px;
     --gw-right: 320px;
-    --bd: #2a2a2a;
-    --bg: #0f0f10;
-    --muted: #a3a3a3;
-    --ring: #0ea5e9;
 }
 
 /* ===== Layout general ===== */
@@ -33,9 +37,9 @@
     }
 }
 
-/* Utilitarios */
+/* ===== Utilitarios ===== */
 .muted {
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: .8rem;
 }
 
@@ -46,13 +50,25 @@
     display: inline-block;
 }
 
+/* Botones locales (si no usas los globales) */
 .btn {
-    background: #171717;
-    border: 1px solid var(--bd);
-    color: #e7e7ea;
+    background: color-mix(in srgb, var(--surface) 90%, var(--text) 10%);
+    border: 1px solid var(--border);
+    color: var(--text);
     border-radius: .6rem;
     padding: .45rem .7rem;
     cursor: pointer;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.btn:hover {
+    background: color-mix(in srgb, var(--surface) 80%, var(--text) 20%);
+    border-color: color-mix(in srgb, var(--border) 70%, var(--ring) 30%);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
 }
 
 .btn--sm {
@@ -66,12 +82,13 @@
     color: #0b0b0c;
 }
 
+/* Chips (WPM) */
 .chip {
     display: flex;
     align-items: center;
     gap: .35rem;
-    background: #0b0b0c;
-    border: 1px solid var(--bd);
+    background: var(--bg);
+    border: 1px solid var(--border);
     padding: .35rem .55rem;
     border-radius: .6rem;
 }
@@ -80,13 +97,14 @@
     width: 70px;
     background: transparent;
     border: 0;
-    color: #e7e7ea;
+    color: var(--text);
+    outline: none;
 }
 
 /* ===== Aside izquierdo ===== */
 .gw__aside {
-    background: var(--bg);
-    border: 1px solid var(--bd);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 1rem;
     padding: .75rem;
     position: sticky;
@@ -114,11 +132,12 @@
     grid-template-columns: auto 1fr auto;
     gap: .5rem;
     align-items: center;
-    background: #0b0b0c;
-    border: 1px solid var(--bd);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: .6rem;
     padding: .4rem .6rem;
     text-align: left;
+    transition: border-color .15s;
 }
 
 .gw__segItem.is-active {
@@ -129,7 +148,7 @@
 .gw__segItem .ghost {
     background: transparent;
     border: 0;
-    color: #e7e7ea;
+    color: var(--text);
     width: 100%;
 }
 
@@ -138,7 +157,7 @@
     display: grid;
     gap: .75rem;
     position: relative;
-    /* clave: ancla del menú contextual */
+    /* ancla del menú contextual */
     z-index: 0;
 }
 
@@ -159,13 +178,13 @@
     direction: ltr;
     unicode-bidi: plaintext;
     text-align: left;
-    caret-color: #e7e7ea;
+    caret-color: var(--text);
 }
 
 /* ===== Panel derecho ===== */
 .gw__panel {
-    background: var(--bg);
-    border: 1px solid var(--bd);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 1rem;
     padding: 1rem;
     position: sticky;
@@ -181,7 +200,7 @@
 .stats li {
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px dashed #222;
+    border-bottom: 1px dashed color-mix(in srgb, var(--border) 75%, transparent);
     padding: .25rem 0;
 }
 
@@ -207,25 +226,26 @@
 .gw__sheet {
     min-height: 70vh;
     padding: 1.5rem;
-    background: #0b0b0c;
-    border: 1px solid var(--bd);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 1rem;
     line-height: 1.7;
     font-size: 16px;
     outline: none;
-    color: #e7e7ea;
+    color: var(--text);
+    box-shadow: var(--shadow, 0 10px 24px rgba(0, 0, 0, .18));
 }
 
 .gw__sheet ::selection {
-    background: #4f9fff44;
+    background: color-mix(in srgb, var(--ring) 30%, transparent);
 }
 
 .gw__sheet[placeholder]:empty:before {
     content: attr(placeholder);
-    color: #6b7280;
+    color: var(--text-muted);
 }
 
-/* ===== Etiquetas suaves ===== */
+/* ===== Etiquetas suaves (mark) ===== */
 mark[data-tag] {
     padding: 0 2px;
     border-radius: 6px;
@@ -276,15 +296,14 @@ mark[data-tag="twist"] {
     border: 1px solid #ef444466;
 }
 
-/* ===== Menú contextual ===== */
+/* ===== Menú contextual (posicionado relativo a .gw__editor) ===== */
 .gw__ctx {
     position: absolute;
-    /* relativo a .gw__editor */
-    z-index: 50;
+    z-index: 60;
     min-width: 220px;
-    background: #111827;
-    color: #e5e7eb;
-    border: 1px solid #374151;
+    background: var(--surface-2, #111827);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 6px;
     box-shadow: 0 12px 28px rgba(0, 0, 0, .35);
@@ -292,7 +311,7 @@ mark[data-tag="twist"] {
 
 .gw__ctx-title {
     font-size: 12px;
-    opacity: .7;
+    color: var(--text-muted);
     padding: 6px 8px 2px;
 }
 
@@ -301,17 +320,22 @@ mark[data-tag="twist"] {
     background: transparent;
     border: 0;
     color: inherit;
-    padding: 8px;
+    padding: 8px 10px;
     text-align: left;
     border-radius: 8px;
     cursor: pointer;
+    transition: background .12s ease;
 }
 
 .gw__ctx-item:hover {
-    background: rgba(255, 255, 255, .06);
+    background: color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .gw__ctx-item.danger {
     color: #fca5a5;
 }
 
+/* ===== (IMPORTANTE) No estilos para .seg-chunk =====
+     Eliminamos subrayado/fondos para no dificultar la lectura.
+     El wrapping de segmentos solo añade un <span> ligero desde JS sin estilos aquí.
+  */

@@ -1,86 +1,137 @@
+/* =========================
+   PROFILE (limpio + DS)
+   ========================= */
+
+/* ---- Card / contenedores ---- */
 .card {
-    background: var(--bg, #0f0f10);
-    border: 1px solid var(--bd, #2a2a2a);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 16px;
-    color: var(--fg, #e7e7ea)
+    color: var(--text);
+    box-shadow: var(--shadow, 0 6px 20px rgba(0, 0, 0, .15));
 }
 
 .card__head h2 {
-    margin: 0
+    margin: 0;
+    font-weight: 700;
 }
 
+/* ---- Tipografía util ---- */
 .muted {
-    opacity: .75
+    color: var(--text-muted);
 }
 
+/* ---- Layout ---- */
 .grid {
     display: grid;
     grid-template-columns: 220px 1fr;
-    gap: 16px
+    gap: 16px;
 }
 
 @media (max-width:900px) {
     .grid {
-        grid-template-columns: 1fr
+        grid-template-columns: 1fr;
     }
 }
 
+/* ---- Avatar ---- */
 .avatar {
     display: grid;
     gap: 10px;
-    align-content: start
+    align-content: start;
 }
 
 .thumb {
     width: 200px;
     height: 200px;
-    background: #0b0b0c;
-    border: 1px solid var(--bd, #2a2a2a);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 14px;
     display: grid;
     place-items: center;
-    color: #9ca3af;
+    color: var(--text-muted);
     background-size: cover;
-    background-position: center
+    background-position: center;
+    overflow: hidden;
 }
 
+/* ---- Acciones ---- */
 .actions {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 
+/* ---- Formulario ---- */
 .form {
     display: grid;
-    gap: 10px
+    gap: 10px;
 }
 
 .inline {
     display: flex;
     gap: 10px;
-    align-items: center
+    align-items: center;
 }
 
-input {
-    background: #0b0b0c;
-    border: 1px solid var(--bd, #2a2a2a);
+/* Inputs (si ya tienes .input global, úsala en el HTML y elimina este bloque) */
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="file"],
+textarea,
+select {
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: .55rem .7rem;
-    color: var(--fg, #e7e7ea)
+    color: var(--text);
+    outline: none;
+    width: 100%;
+    transition: border-color .15s ease, box-shadow .15s ease;
 }
 
+input::placeholder,
+textarea::placeholder {
+    color: color-mix(in srgb, var(--text-muted) 85%, transparent);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 28%, transparent);
+}
+
+/* ---- Botones (si ya usas .btn global, puedes borrar estos estilos locales) */
 .btn {
     padding: .55rem .8rem;
-    border: 1px solid var(--bd, #2a2a2a);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    background: #171717;
-    color: #e7e7ea;
-    cursor: pointer
+    background: color-mix(in srgb, var(--surface) 90%, var(--text) 10%);
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.btn:hover {
+    background: color-mix(in srgb, var(--surface) 80%, var(--text) 20%);
+    border-color: color-mix(in srgb, var(--border) 70%, var(--ring) 30%);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
 }
 
 .btn--primary {
-    background: #0ea5e9;
-    border-color: #0ea5e9;
-    color: #0b0b0c
+    background: var(--ring);
+    border-color: var(--ring);
+    color: #0b0b0c;
+    /* contraste en ambos temas */
+}
+
+.btn--primary:hover {
+    filter: brightness(1.05);
 }

@@ -122,17 +122,31 @@
 
         // acciones
         const bringFront = (n) => { n.z = nextZ(); saveNotes(); };
+        // En acciones: reemplaza removeNote por versión con confirm
         const removeNote = (id) => {
-          // eliminar conexiones relacionadas
-          const before = links.value.length;
-          links.value = links.value.filter(l => l.from !== id && l.to !== id);
-          if (links.value.length !== before) saveLinks();
+          const note = notes.value.find(n => n.id === id);
+          if (!note) return;
 
-          notes.value = notes.value.filter(n => n.id !== id);
-          selected.value.delete(id);
-          if (editingId.value === id) cancelEdit();
-          saveNotes(); closeCtx(); redrawLinks();
+          toast.confirm({
+            message: `¿Eliminar esta nota?`,
+            okText: 'Sí, eliminar',
+            cancelText: 'Cancelar',
+            onOk: () => {
+              // eliminar conexiones relacionadas
+              const before = links.value.length;
+              links.value = links.value.filter(l => l.from !== id && l.to !== id);
+              if (links.value.length !== before) saveLinks();
+
+              notes.value = notes.value.filter(n => n.id !== id);
+              selected.value.delete(id);
+              if (editingId.value === id) cancelEdit();
+              saveNotes(); closeCtx(); redrawLinks();
+
+              toast.success('Nota eliminada');
+            }
+          });
         };
+
         const duplicate = (n) => { createAt(n.x + 16, n.y + 12, n.color, n.text); };
         const recolor = (n, color) => { n.color = color; saveNotes(); closeCtx(); };
 
